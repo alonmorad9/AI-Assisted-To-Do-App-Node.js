@@ -15,3 +15,16 @@ export interface User {
 }
 
 export type TodoFilter = 'all' | 'active' | 'completed' | 'due-today' | 'priority';
+
+// Database type for Supabase
+export interface Database {
+  public: {
+    Tables: {
+      todos: {
+        Row: Todo;
+        Insert: Omit<Todo, 'id' | 'created_at'>;
+        Update: Partial<Omit<Todo, 'id' | 'user_id' | 'created_at'>>;
+      };
+    };
+  };
+}
