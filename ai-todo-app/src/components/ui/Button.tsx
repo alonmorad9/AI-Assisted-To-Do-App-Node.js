@@ -6,6 +6,9 @@ interface ButtonProps {
   type?: 'button' | 'submit'
   variant?: 'primary' | 'secondary'
   disabled?: boolean
+  'aria-label'?: string
+  'aria-describedby'?: string
+  style?: React.CSSProperties
 }
 
 export function Button({ 
@@ -13,7 +16,9 @@ export function Button({
   onClick, 
   type = 'button', 
   variant = 'primary',
-  disabled = false 
+  disabled = false,
+  style = {},
+  ...ariaProps
 }: ButtonProps) {
   const baseStyle = {
     padding: '0.5rem 1rem',
@@ -23,6 +28,9 @@ export function Button({
     fontSize: '0.875rem',
     fontWeight: '500',
     opacity: disabled ? 0.6 : 1,
+    transition: 'all 0.2s ease',
+    outline: 'none',
+    ...style,
   }
 
   const primaryStyle = {
@@ -35,7 +43,12 @@ export function Button({
     color: '#374151',
   }
 
-  const style = {
+  const hoverStyle = disabled ? {} : {
+    transform: 'translateY(-1px)',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  }
+
+  const combinedStyle = {
     ...baseStyle,
     ...(variant === 'primary' ? primaryStyle : secondaryStyle),
   }
@@ -45,7 +58,23 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      style={style}
+      style={combinedStyle}
+      onMouseEnter={(e) => {
+        if (!disabled) {
+          Object.assign(e.currentTarget.style, hoverStyle)
+        }
+      }}
+      onMouseLeave={(e) => {
+        Object.assign(e.currentTarget.style, combinedStyle)
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.outline = '2px solid #3b82f6'
+        e.currentTarget.style.outlineOffset = '2px'
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.outline = 'none'
+      }}
+      {...ariaProps}
     >
       {children}
     </button>
