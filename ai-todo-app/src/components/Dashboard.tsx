@@ -1,9 +1,16 @@
 import React from 'react'
 import { useAuth } from '../lib/auth'
 import { Button } from './ui/Button'
+import { TodoForm } from './todos/TodoForm'
+import { TodoList } from './todos/TodoList'
 
 export function Dashboard() {
   const { user, signOut } = useAuth()
+  const [refreshKey, setRefreshKey] = React.useState(0)
+
+  const handleTodoAdded = () => {
+    setRefreshKey(prev => prev + 1)
+  }
 
   const containerStyle = {
     maxWidth: '800px',
@@ -26,10 +33,10 @@ export function Dashboard() {
     <div style={containerStyle}>
       <div style={headerStyle}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937' }}>
-            AI Todo App Dashboard
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
+            AI Todo App
           </h1>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: '0.25rem 0 0 0' }}>
             Welcome, {user?.email}!
           </p>
         </div>
@@ -38,19 +45,10 @@ export function Dashboard() {
         </Button>
       </div>
 
-      <div style={{ 
-        padding: '2rem', 
-        backgroundColor: 'white', 
-        borderRadius: '0.5rem',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        textAlign: 'center' 
-      }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#1f2937' }}>
-          🎉 Authentication Working!
-        </h2>
-        <p style={{ color: '#6b7280' }}>
-          Todo functionality coming next...
-        </p>
+      <TodoForm onTodoAdded={handleTodoAdded} />
+      
+      <div key={refreshKey}>
+        <TodoList />
       </div>
     </div>
   )
