@@ -1,7 +1,7 @@
 {
   "framework": "vite",
-  "buildCommand": "cd ai-todo-app && npm install && npm run build",
-  "outputDirectory": "ai-todo-app/dist",
-  "installCommand": "cd ai-todo-app && npm install",
-  "devCommand": "cd ai-todo-app && npm run dev"
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev"
 }
