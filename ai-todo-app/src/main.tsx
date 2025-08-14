@@ -1,8 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { AuthProvider, useAuth } from './lib/auth'
+import { ToastProvider } from './lib/toast'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { AuthForm } from './components/auth/AuthForm'
 import { Dashboard } from './components/Dashboard'
+import { Loading } from './components/ui/Loading'
 
 function AppContent() {
   const { user, loading } = useAuth()
@@ -22,14 +25,14 @@ function AppContent() {
           borderRadius: '0.5rem', 
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' 
         }}>
-          <p style={{ fontSize: '1.125rem' }}>Loading...</p>
+          <Loading text="Loading your todos..." size="large" />
         </div>
       </div>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', padding: '2rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', padding: '1rem' }}>
       {user ? <Dashboard /> : <AuthForm />}
     </div>
   )
@@ -37,9 +40,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ToastProvider>
+    </ErrorBoundary>
   )
 }
 

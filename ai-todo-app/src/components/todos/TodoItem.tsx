@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import { Todo } from '../../types'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
+import { Loading } from '../ui/Loading'
 import { updateTodo, deleteTodo } from '../../lib/todos'
+import { useToast } from '../../lib/toast'
 
 interface TodoItemProps {
   todo: Todo
@@ -12,6 +14,7 @@ interface TodoItemProps {
 export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
   const [loading, setLoading] = useState(false)
   const [editing, setEditing] = useState(false)
+  const { showToast } = useToast()
   
   // Edit form state
   const [editTitle, setEditTitle] = useState(todo.title)
@@ -22,10 +25,18 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
   const handleToggleComplete = async () => {
     setLoading(true)
     try {
-      await updateTodo(todo.id, { completed: !todo.completed })
-      onTodoUpdated()
+      const { error } = await updateTodo(todo.id, { completed: !todo.completed })
+      if (error) {
+        showToast(`Failed to update todo: ${error.message}`, 'error')
+      } else {
+        showToast(
+          todo.completed ? 'Todo marked as incomplete' : 'Todo completed! 🎉', 
+          'success'
+        )
+        onTodoUpdated()
+      }
     } catch (err) {
-      console.error('Failed to update todo:', err)
+      showToast('Failed to update todo. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
@@ -36,10 +47,15 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
 
     setLoading(true)
     try {
-      await deleteTodo(todo.id)
-      onTodoUpdated()
+      const { error } = await deleteTodo(todo.id)
+      if (error) {
+        showToast(`Failed to delete todo: ${error.message}`, 'error')
+      } else {
+        showToast('Todo deleted successfully', 'success')
+        onTodoUpdated()
+      }
     } catch (err) {
-      console.error('Failed to delete todo:', err)
+      showToast('Failed to delete todo. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
@@ -58,20 +74,29 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
   }
 
   const handleSaveEdit = async () => {
-    if (!editTitle.trim()) return
+    if (!editTitle.trim()) {
+      showToast('Todo title cannot be empty', 'error')
+      return
+    }
 
     setLoading(true)
     try {
-      await updateTodo(todo.id, {
+      const { error } = await updateTodo(todo.id, {
         title: editTitle.trim(),
         description: editDescription.trim() || undefined,
         due_date: editDueDate || undefined,
         priority: editPriority,
       })
-      setEditing(false)
-      onTodoUpdated()
+      
+      if (error) {
+        showToast(`Failed to update todo: ${error.message}`, 'error')
+      } else {
+        setEditing(false)
+        showToast('Todo updated successfully!', 'success')
+        onTodoUpdated()
+      }
     } catch (err) {
-      console.error('Failed to update todo:', err)
+      showToast('Failed to update todo. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
@@ -86,6 +111,15 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     }
   }
 
+  const getPriorityEmoji = (priority: string) => {
+    switch (priority) {
+      case 'high': return '🔴'
+      case 'medium': return '🟡'
+      case 'low': return '🟢'
+      default: return '⚪'
+    }
+  }
+
   const itemStyle = {
     backgroundColor: 'white',
     padding: '1rem',
@@ -93,6 +127,8 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     marginBottom: '0.75rem',
     opacity: todo.completed ? 0.7 : 1,
+    border: todo.completed ? '2px solid #10b981' : '2px solid transparent',
+    transition: 'all 0.2s ease',
   }
 
   const headerStyle = {
@@ -115,6 +151,9 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     fontWeight: '500',
     color: getPriorityColor(todo.priority),
     textTransform: 'uppercase' as const,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
   }
 
   const buttonGroupStyle = {
@@ -133,7 +172,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
 
   const editRowStyle = {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gap: '0.75rem',
   }
 
@@ -145,10 +184,28 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     fontSize: '0.875rem',
     outline: 'none',
     boxSizing: 'border-box' as const,
+    backgroundColor: 'white',
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
+    const date = new Date(dateString)
+    const today = new Date()
+    const isToday = date.toDateString() === today.toDateString()
+    const isPast = date < today
+    
+    return {
+      formatted: date.toLocaleDateString(),
+      isToday,
+      isPast: isPast && !isToday
+    }
+  }
+
+  if (loading && !editing) {
+    return (
+      <div style={{...itemStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px'}}>
+        <Loading text="Updating..." />
+      </div>
+    )
   }
 
   return (
@@ -157,7 +214,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
         // Edit Mode
         <div>
           <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#1f2937', marginBottom: '0.75rem' }}>
-            Edit Todo
+            ✏️ Edit Todo
           </h4>
           
           <div style={editFormStyle}>
@@ -189,9 +246,9 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
                 onChange={(e) => setEditPriority(e.target.value as 'low' | 'medium' | 'high')}
                 style={selectStyle}
               >
-                <option value="low">Low Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="high">High Priority</option>
+                <option value="low">🟢 Low Priority</option>
+                <option value="medium">🟡 Medium Priority</option>
+                <option value="high">🔴 High Priority</option>
               </select>
             </div>
           </div>
@@ -201,7 +258,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
               onClick={handleSaveEdit}
               disabled={loading || !editTitle.trim()}
             >
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? <Loading size="small" text="" /> : '💾 Save'}
             </Button>
             
             <Button
@@ -209,7 +266,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
               disabled={loading}
               variant="secondary"
             >
-              Cancel
+              ❌ Cancel
             </Button>
           </div>
         </div>
@@ -218,8 +275,12 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
         <div>
           <div style={headerStyle}>
             <div style={{ flex: 1 }}>
-              <h4 style={titleStyle}>{todo.title}</h4>
-              <span style={priorityStyle}>{todo.priority} priority</span>
+              <h4 style={titleStyle}>
+                {todo.completed && '✅ '}{todo.title}
+              </h4>
+              <div style={priorityStyle}>
+                {getPriorityEmoji(todo.priority)} {todo.priority} priority
+              </div>
             </div>
           </div>
 
@@ -235,8 +296,16 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
           )}
 
           {todo.due_date && (
-            <p style={{ color: '#6b7280', fontSize: '0.75rem', margin: '0.25rem 0' }}>
-              Due: {formatDate(todo.due_date)}
+            <p style={{ 
+              color: formatDate(todo.due_date).isPast ? '#dc2626' : 
+                     formatDate(todo.due_date).isToday ? '#d97706' : '#6b7280', 
+              fontSize: '0.75rem', 
+              margin: '0.25rem 0',
+              fontWeight: formatDate(todo.due_date).isToday ? '600' : '400'
+            }}>
+              📅 Due: {formatDate(todo.due_date).formatted}
+              {formatDate(todo.due_date).isToday && ' (Today!)'}
+              {formatDate(todo.due_date).isPast && ' (Overdue)'}
             </p>
           )}
 
@@ -246,7 +315,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
               disabled={loading}
               variant={todo.completed ? 'secondary' : 'primary'}
             >
-              {todo.completed ? 'Mark Incomplete' : 'Mark Complete'}
+              {todo.completed ? '↩️ Undo' : '✅ Complete'}
             </Button>
             
             <Button
@@ -254,7 +323,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
               disabled={loading}
               variant="secondary"
             >
-              Edit
+              ✏️ Edit
             </Button>
             
             <Button
@@ -262,7 +331,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
               disabled={loading}
               variant="secondary"
             >
-              Delete
+              🗑️ Delete
             </Button>
           </div>
         </div>
