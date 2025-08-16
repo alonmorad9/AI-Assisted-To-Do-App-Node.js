@@ -1,11 +1,11 @@
 import React from 'react'
 
-interface LoadingProps {
+interface LoadingProps { // Props for the Loading component
   text?: string
   size?: 'small' | 'medium' | 'large'
 }
 
-export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) {
+export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) { // Loading component to show a spinner and optional text
   const getSizeStyles = () => {
     switch (size) {
       case 'small':
@@ -18,7 +18,7 @@ export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) 
     }
   }
 
-  const spinnerStyle = {
+  const spinnerStyle = { // Styles for the spinner
     ...getSizeStyles(),
     border: '2px solid #f3f4f6',
     borderTop: '2px solid #3b82f6',
@@ -28,7 +28,7 @@ export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) 
     marginRight: text ? '0.5rem' : '0',
   }
 
-  const containerStyle = {
+  const containerStyle = { // Styles for the loading container
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -36,7 +36,7 @@ export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) 
     fontSize: '0.875rem',
   }
 
-  return (
+  return ( // JSX for the Loading component
     <div style={containerStyle}>
       <div style={spinnerStyle}></div>
       {text && <span>{text}</span>}
