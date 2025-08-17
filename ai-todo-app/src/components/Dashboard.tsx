@@ -5,22 +5,22 @@ import { TodoForm } from './todos/TodoForm'
 import { TodoList } from './todos/TodoList'
 import { useResponsive } from '../hooks/useResponsive'
 
-export function Dashboard() {
-  const { user, signOut } = useAuth()
-  const { isMobile } = useResponsive()
-  const [refreshKey, setRefreshKey] = React.useState(0)
+export function Dashboard() { // Main Dashboard component that displays the user's todos and allows adding new ones
+  const { user, signOut } = useAuth() // Get the current user and sign out function from auth context
+  const { isMobile } = useResponsive() // Use custom hook to determine if the device is mobile
+  const [refreshKey, setRefreshKey] = React.useState(0) // State to force re-render of the TodoList when a new todo is added
 
-  const handleTodoAdded = () => {
-    setRefreshKey(prev => prev + 1)
+  const handleTodoAdded = () => { // Callback function to handle when a new todo is added
+    setRefreshKey(prev => prev + 1) // Increment the refresh key to trigger a re-render of the TodoList
   }
 
-  const containerStyle = {
+  const containerStyle = { // Style for the main container of the dashboard
     maxWidth: '800px',
     margin: '0 auto',
     padding: isMobile ? '1rem' : '2rem',
   }
 
-  const headerStyle: React.CSSProperties = {
+  const headerStyle: React.CSSProperties = { // Style for the header of the dashboard
     display: 'flex',
     flexDirection: isMobile ? 'column' : 'row',
     justifyContent: 'space-between',
@@ -33,21 +33,21 @@ export function Dashboard() {
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
   }
 
-  const titleStyle = {
+  const titleStyle = { // Style for the title of the dashboard
     fontSize: isMobile ? '1.25rem' : '1.5rem',
     fontWeight: 'bold',
     color: '#1f2937',
     margin: 0,
   }
 
-  const subtitleStyle = {
+  const subtitleStyle = { // Style for the subtitle showing the user's email
     color: '#6b7280',
     fontSize: '0.875rem',
     margin: '0.25rem 0 0 0',
     wordBreak: 'break-word' as const,
   }
 
-  return (
+  return ( // JSX for the Dashboard component
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div style={{ flex: 1 }}>

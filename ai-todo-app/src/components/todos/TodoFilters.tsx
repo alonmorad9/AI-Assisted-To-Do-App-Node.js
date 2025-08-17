@@ -2,10 +2,10 @@ import React from 'react'
 import { TodoFilter } from '../../types'
 import { Button } from '../ui/Button'
 
-interface TodoFiltersProps {
+interface TodoFiltersProps { // Props for the TodoFilters component
   currentFilter: TodoFilter
-  onFilterChange: (filter: TodoFilter) => void
-  todoCounts: {
+  onFilterChange: (filter: TodoFilter) => void // Callback function to call when a filter is changed
+  todoCounts: { 
     all: number
     active: number
     completed: number
@@ -14,8 +14,8 @@ interface TodoFiltersProps {
   }
 }
 
-export function TodoFilters({ currentFilter, onFilterChange, todoCounts }: TodoFiltersProps) {
-  const filters = [
+export function TodoFilters({ currentFilter, onFilterChange, todoCounts }: TodoFiltersProps) { // Main component to display filter options for todos
+  const filters = [ // Array of filter options with their respective counts
     { key: 'all' as TodoFilter, label: 'All', count: todoCounts.all },
     { key: 'active' as TodoFilter, label: 'Active', count: todoCounts.active },
     { key: 'completed' as TodoFilter, label: 'Completed', count: todoCounts.completed },
@@ -23,7 +23,7 @@ export function TodoFilters({ currentFilter, onFilterChange, todoCounts }: TodoF
     { key: 'priority' as TodoFilter, label: 'High Priority', count: todoCounts.highPriority },
   ]
 
-  const containerStyle = {
+  const containerStyle = { // Style for the filter container
     backgroundColor: 'white',
     padding: '1rem',
     borderRadius: '0.5rem',
@@ -31,13 +31,13 @@ export function TodoFilters({ currentFilter, onFilterChange, todoCounts }: TodoF
     marginBottom: '1.5rem',
   }
 
-  const filtersStyle = {
+  const filtersStyle = { // Style for the filter buttons
     display: 'flex',
     gap: '0.5rem',
     flexWrap: 'wrap' as const,
   }
 
-  const filterButtonStyle = (isActive: boolean) => ({
+  const filterButtonStyle = (isActive: boolean) => ({ // Style for each filter button
     padding: '0.5rem 1rem',
     borderRadius: '0.375rem',
     border: '1px solid #d1d5db',
@@ -51,7 +51,7 @@ export function TodoFilters({ currentFilter, onFilterChange, todoCounts }: TodoF
     gap: '0.5rem',
   })
 
-  const badgeStyle = {
+  const badgeStyle = { // Style for the badge showing the count of todos for each filter
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     color: 'inherit',
     fontSize: '0.75rem',
@@ -62,7 +62,7 @@ export function TodoFilters({ currentFilter, onFilterChange, todoCounts }: TodoF
     textAlign: 'center' as const,
   }
 
-  return (
+  return ( // JSX for the TodoFilters component
     <div style={containerStyle}>
       <h3 style={{ 
         fontSize: '1rem', 

@@ -5,13 +5,13 @@ import { TodoItem } from './TodoItem'
 import { TodoFilters } from './TodoFilters'
 import { BulkActions } from './BulkActions'
 
-export function TodoList() {
-  const [todos, setTodos] = useState<Todo[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [currentFilter, setCurrentFilter] = useState<TodoFilter>('all')
+export function TodoList() { // Main component to display the list of todos
+  const [todos, setTodos] = useState<Todo[]>([]) // State to hold the list of todos
+  const [loading, setLoading] = useState(true) // State to indicate if todos are being loaded
+  const [error, setError] = useState('') // State to hold any error messages
+  const [currentFilter, setCurrentFilter] = useState<TodoFilter>('all') // State to hold the current filter applied to todos
 
-  const loadTodos = async () => {
+  const loadTodos = async () => { // Function to load todos from the server
     try {
       const { data, error } = await getTodos()
       
@@ -27,21 +27,21 @@ export function TodoList() {
     }
   }
 
-  useEffect(() => {
+  useEffect(() => { // Load todos when the component mounts
     loadTodos()
   }, [])
 
-  const handleTodoUpdated = () => {
+  const handleTodoUpdated = () => { // Callback to refresh todos after an update
     loadTodos()
   }
 
-  const isToday = (dateString: string) => {
+  const isToday = (dateString: string) => { // Function to check if a date is today
     const today = new Date()
     const todoDate = new Date(dateString)
     return today.toDateString() === todoDate.toDateString()
   }
 
-  const getFilteredTodos = () => {
+  const getFilteredTodos = () => { // Function to filter todos based on the current filter
     switch (currentFilter) {
       case 'active':
         return todos.filter(todo => !todo.completed)
@@ -57,7 +57,7 @@ export function TodoList() {
     }
   }
 
-  const getTodoCounts = () => {
+  const getTodoCounts = () => { // Function to get counts of todos based on their status
     return {
       all: todos.length,
       active: todos.filter(todo => !todo.completed).length,
@@ -67,7 +67,7 @@ export function TodoList() {
     }
   }
 
-  if (loading) {
+  if (loading) { // If todos are still loading, show a loading state
     return (
       <div style={{ textAlign: 'center', padding: '2rem' }}>
         <p style={{ color: '#6b7280' }}>Loading todos...</p>
@@ -97,10 +97,10 @@ export function TodoList() {
     )
   }
 
-  const filteredTodos = getFilteredTodos()
-  const todoCounts = getTodoCounts()
+  const filteredTodos = getFilteredTodos() // Get the todos based on the current filter
+  const todoCounts = getTodoCounts() // Get the counts of todos based on their status
 
-  const getFilterDisplayText = () => {
+  const getFilterDisplayText = () => { // Function to get the display text for the current filter
     switch (currentFilter) {
       case 'active': return 'Active Todos'
       case 'completed': return 'Completed Todos'
@@ -111,7 +111,7 @@ export function TodoList() {
     }
   }
 
-  return (
+  return ( // JSX for the TodoList component
     <div>
       {todos.length > 0 && (
         <>

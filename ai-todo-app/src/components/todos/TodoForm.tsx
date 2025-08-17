@@ -6,14 +6,14 @@ import { useToast } from '../../lib/toast'
 import { useFormValidation } from '../../hooks/useFormValidation'
 import { createTodoSchema, sanitizeTodoInput } from '../../lib/validation'
 
-interface TodoFormProps {
-  onTodoAdded: () => void
+interface TodoFormProps { // Props for the TodoForm component
+  onTodoAdded: () => void // Callback function to call when a todo is successfully added
 }
 
-export function TodoForm({ onTodoAdded }: TodoFormProps) {
-  const { showToast } = useToast()
+export function TodoForm({ onTodoAdded }: TodoFormProps) { // Main form component for creating new todos
+  const { showToast } = useToast() // Import toast function for displaying messages
 
-  const form = useFormValidation({
+  const form = useFormValidation({ // Use custom hook for form validation
     schema: createTodoSchema,
     initialValues: {
       title: '',
@@ -21,7 +21,7 @@ export function TodoForm({ onTodoAdded }: TodoFormProps) {
       due_date: '',
       priority: 'medium' as const,
     },
-    onSubmit: async (data) => {
+    onSubmit: async (data) => { // Handle form submission
       try {
         // Sanitize input data
         const sanitizedData = sanitizeTodoInput(data)
@@ -31,7 +31,7 @@ export function TodoForm({ onTodoAdded }: TodoFormProps) {
           completed: false,
         })
 
-        if (error) {
+        if (error) { // If there's an error creating the todo, show a toast message
           showToast(`Failed to create todo: ${error.message}`, 'error')
         } else {
           // Reset form
@@ -40,16 +40,16 @@ export function TodoForm({ onTodoAdded }: TodoFormProps) {
           form.setValue('due_date', '')
           form.setValue('priority', 'medium')
           
-          showToast('Todo created successfully! 🎉', 'success')
-          onTodoAdded()
+          showToast('Todo created successfully! 🎉', 'success') // Show a success toast message
+          onTodoAdded() // Call the callback to notify parent component
         }
-      } catch (err) {
+      } catch (err) { // Catch any unexpected errors
         showToast('Failed to create todo. Please try again.', 'error')
       }
     },
   })
 
-  const formStyle = {
+  const formStyle = { // Style for the form container
     backgroundColor: 'white',
     padding: '1.5rem',
     borderRadius: '0.5rem',
@@ -57,13 +57,13 @@ export function TodoForm({ onTodoAdded }: TodoFormProps) {
     marginBottom: '1.5rem',
   }
 
-  const gridStyle = {
+  const gridStyle = { // Style for the grid layout of date and priority fields
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '1rem',
   }
 
-  const selectStyle = {
+  const selectStyle = { // Style for the priority select dropdown
     width: '100%',
     padding: '0.75rem',
     border: '2px solid #d1d5db',
@@ -75,7 +75,7 @@ export function TodoForm({ onTodoAdded }: TodoFormProps) {
     transition: 'border-color 0.2s ease',
   }
 
-  const labelStyle = {
+  const labelStyle = { // Style for the label of the select dropdown
     display: 'block',
     fontSize: '0.875rem',
     fontWeight: '500',
@@ -83,14 +83,14 @@ export function TodoForm({ onTodoAdded }: TodoFormProps) {
     marginBottom: '0.5rem',
   }
 
-  const characterCountStyle = (current: number, max: number) => ({
+  const characterCountStyle = (current: number, max: number) => ({ // Style for character count display
     fontSize: '0.75rem',
     color: current > max * 0.8 ? '#ef4444' : '#6b7280',
     textAlign: 'right' as const,
     marginTop: '0.25rem',
   })
 
-  return (
+  return ( // JSX for the TodoForm component
     <form onSubmit={form.handleSubmit} style={formStyle}>
       <h3 style={{ 
         fontSize: '1.125rem', 

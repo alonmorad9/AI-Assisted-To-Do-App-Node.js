@@ -1,4 +1,4 @@
-export interface Todo {
+export interface Todo { // Type definition for a Todo item
   id: string;
   title: string;
   description?: string;
@@ -9,15 +9,14 @@ export interface Todo {
   user_id: string;
 }
 
-export interface User {
+export interface User { // Type definition for a User
   id: string;
   email: string;
 }
 
-export type TodoFilter = 'all' | 'active' | 'completed' | 'due-today' | 'priority';
+export type TodoFilter = 'all' | 'active' | 'completed' | 'due-today' | 'priority'; // Type definition for TodoFilter
 
-// Database type for Supabase
-export interface Database {
+export interface Database { // Type definition for the database schema
   public: {
     Tables: {
       todos: {

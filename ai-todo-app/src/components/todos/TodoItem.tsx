@@ -6,23 +6,23 @@ import { Loading } from '../ui/Loading'
 import { updateTodo, deleteTodo } from '../../lib/todos'
 import { useToast } from '../../lib/toast'
 
-interface TodoItemProps {
-  todo: Todo
-  onTodoUpdated: () => void
+interface TodoItemProps { // Props for the TodoItem component
+  todo: Todo // The todo item to display and manage
+  onTodoUpdated: () => void // Callback function to call when the todo is updated
 }
 
-export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
-  const [loading, setLoading] = useState(false)
-  const [editing, setEditing] = useState(false)
-  const { showToast } = useToast()
+export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) { // Main component for displaying and managing a single todo item
+  const [loading, setLoading] = useState(false) // State to manage loading state during updates
+  const [editing, setEditing] = useState(false) // State to manage whether the item is in edit mode
+  const { showToast } = useToast() // Import toast function for displaying messages
   
   // Edit form state
-  const [editTitle, setEditTitle] = useState(todo.title)
-  const [editDescription, setEditDescription] = useState(todo.description || '')
-  const [editDueDate, setEditDueDate] = useState(todo.due_date || '')
-  const [editPriority, setEditPriority] = useState(todo.priority)
+  const [editTitle, setEditTitle] = useState(todo.title) // State to store the new title when editing
+  const [editDescription, setEditDescription] = useState(todo.description || '') // State to store the new description when editing
+  const [editDueDate, setEditDueDate] = useState(todo.due_date || '') // State to store the new due date when editing
+  const [editPriority, setEditPriority] = useState(todo.priority) // State to store the new priority when editing
 
-  const handleToggleComplete = async () => {
+  const handleToggleComplete = async () => { // Function to toggle the completion status of the todo
     setLoading(true)
     try {
       const { error } = await updateTodo(todo.id, { completed: !todo.completed })
@@ -33,26 +33,26 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
           todo.completed ? 'Todo marked as incomplete' : 'Todo completed! 🎉', 
           'success'
         )
-        onTodoUpdated()
+        onTodoUpdated() // Call the callback to notify parent component
       }
     } catch (err) {
       showToast('Failed to update todo. Please try again.', 'error')
     } finally {
-      setLoading(false)
+      setLoading(false) // Reset loading state
     }
   }
 
-  const handleDelete = async () => {
+  const handleDelete = async () => { // Function to delete the todo item
     if (!confirm('Are you sure you want to delete this todo?')) return
 
-    setLoading(true)
+    setLoading(true) // Set loading state to true while deleting
     try {
       const { error } = await deleteTodo(todo.id)
       if (error) {
         showToast(`Failed to delete todo: ${error.message}`, 'error')
       } else {
         showToast('Todo deleted successfully', 'success')
-        onTodoUpdated()
+        onTodoUpdated() // Call the callback to notify parent component
       }
     } catch (err) {
       showToast('Failed to delete todo. Please try again.', 'error')
@@ -61,7 +61,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     }
   }
 
-  const handleStartEdit = () => {
+  const handleStartEdit = () => { // Function to start editing the todo item
     setEditTitle(todo.title)
     setEditDescription(todo.description || '')
     setEditDueDate(todo.due_date || '')
@@ -69,11 +69,11 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     setEditing(true)
   }
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = () => { // Function to cancel editing and reset fields
     setEditing(false)
   }
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = async () => { // Function to save the edited todo item
     if (!editTitle.trim()) {
       showToast('Todo title cannot be empty', 'error')
       return
@@ -102,7 +102,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     }
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (priority: string) => { // Function to get the color based on priority
     switch (priority) {
       case 'high': return '#dc2626'
       case 'medium': return '#d97706'
@@ -111,7 +111,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     }
   }
 
-  const getPriorityEmoji = (priority: string) => {
+  const getPriorityEmoji = (priority: string) => { // Function to get the emoji based on priority
     switch (priority) {
       case 'high': return '🔴'
       case 'medium': return '🟡'
@@ -120,7 +120,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     }
   }
 
-  const itemStyle = {
+  const itemStyle = { // Style for the todo item container
     backgroundColor: 'white',
     padding: '1rem',
     borderRadius: '0.5rem',
@@ -131,14 +131,14 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     transition: 'all 0.2s ease',
   }
 
-  const headerStyle = {
+  const headerStyle = { // Style for the todo header
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: '0.5rem',
   }
 
-  const titleStyle = {
+  const titleStyle = { // Style for the todo title
     fontSize: '1rem',
     fontWeight: '600',
     color: '#1f2937',
@@ -146,7 +146,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     margin: 0,
   }
 
-  const priorityStyle = {
+  const priorityStyle = { // Style for the priority label
     fontSize: '0.75rem',
     fontWeight: '500',
     color: getPriorityColor(todo.priority),
@@ -156,27 +156,27 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     gap: '0.25rem',
   }
 
-  const buttonGroupStyle = {
+  const buttonGroupStyle = { // Style for the button group
     display: 'flex',
     gap: '0.5rem',
     marginTop: '0.75rem',
     flexWrap: 'wrap' as const,
   }
 
-  const editFormStyle = {
+  const editFormStyle = { // Style for the edit form
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '0.75rem',
     marginBottom: '0.75rem',
   }
 
-  const editRowStyle = {
+  const editRowStyle = { // Style for the edit row
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gap: '0.75rem',
   }
 
-  const selectStyle = {
+  const selectStyle = { // Style for the priority select dropdown
     width: '100%',
     padding: '0.5rem 0.75rem',
     border: '1px solid #d1d5db',
@@ -187,20 +187,20 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     backgroundColor: 'white',
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string) => { // Function to format the date and check if it's today or past
     const date = new Date(dateString)
     const today = new Date()
     const isToday = date.toDateString() === today.toDateString()
     const isPast = date < today
     
-    return {
+    return { // Return formatted date and flags for today and past
       formatted: date.toLocaleDateString(),
       isToday,
       isPast: isPast && !isToday
     }
   }
 
-  if (loading && !editing) {
+  if (loading && !editing) { // If loading and not in edit mode, show a loading spinner
     return (
       <div style={{...itemStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80px'}}>
         <Loading text="Updating..." />
@@ -208,7 +208,7 @@ export function TodoItem({ todo, onTodoUpdated }: TodoItemProps) {
     )
   }
 
-  return (
+  return ( // JSX for the TodoItem component
     <div style={itemStyle}>
       {editing ? (
         // Edit Mode

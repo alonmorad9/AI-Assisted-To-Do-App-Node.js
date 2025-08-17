@@ -6,7 +6,7 @@ interface LoadingProps { // Props for the Loading component
 }
 
 export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) { // Loading component to show a spinner and optional text
-  const getSizeStyles = () => {
+  const getSizeStyles = () => { // Function to determine styles based on size prop
     switch (size) {
       case 'small':
         return { width: '16px', height: '16px' }
@@ -36,7 +36,7 @@ export function Loading({ text = 'Loading...', size = 'medium' }: LoadingProps) 
     fontSize: '0.875rem',
   }
 
-  return ( // JSX for the Loading component
+  return ( // Render the loading spinner and optional text
     <div style={containerStyle}>
       <div style={spinnerStyle}></div>
       {text && <span>{text}</span>}

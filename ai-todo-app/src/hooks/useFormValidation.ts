@@ -1,27 +1,27 @@
 import { useState } from 'react'
 import { z } from 'zod'
 
-interface UseFormValidationProps<T extends Record<string, any>> {
+interface UseFormValidationProps<T extends Record<string, any>> { // Props for the useFormValidation hook
   schema: z.ZodObject<any>
-  onSubmit: (data: T) => Promise<void>
-  initialValues: T
+  onSubmit: (data: T) => Promise<void> // Function to call on form submission
+  initialValues: T // Initial values for the form fields
 }
 
-interface FieldError {
+interface FieldError { // Type for field errors
   message: string
 }
 
-export function useFormValidation<T extends Record<string, any>>({
+export function useFormValidation<T extends Record<string, any>>({ // Custom hook for form validation
   schema,
   onSubmit,
   initialValues,
-}: UseFormValidationProps<T>) {
-  const [values, setValues] = useState<T>(initialValues)
-  const [errors, setErrors] = useState<Partial<Record<keyof T, FieldError>>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({})
+}: UseFormValidationProps<T>) { 
+  const [values, setValues] = useState<T>(initialValues) // State to hold form values
+  const [errors, setErrors] = useState<Partial<Record<keyof T, FieldError>>>({}) // State to hold validation errors
+  const [isSubmitting, setIsSubmitting] = useState(false) // State to indicate if the form is being submitted
+  const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({}) // State to track if fields have been touched
 
-  const validateField = (name: keyof T, value: any) => {
+  const validateField = (name: keyof T, value: any) => { // Function to validate a single field
     try {
       // Validate just this field
       const fieldSchema = schema.pick({ [name]: true } as any)
@@ -33,7 +33,7 @@ export function useFormValidation<T extends Record<string, any>>({
         delete newErrors[name]
         return newErrors
       })
-    } catch (error) {
+    } catch (error) { // If validation fails, set the error
       if (error instanceof z.ZodError) {
         setErrors(prev => ({
           ...prev,
@@ -43,7 +43,7 @@ export function useFormValidation<T extends Record<string, any>>({
     }
   }
 
-  const setValue = (name: keyof T, value: any) => {
+  const setValue = (name: keyof T, value: any) => { // Function to set a field value
     setValues(prev => ({ ...prev, [name]: value }))
     
     // Validate field if it's been touched
@@ -52,46 +52,46 @@ export function useFormValidation<T extends Record<string, any>>({
     }
   }
 
-  const setFieldTouched = (name: keyof T) => {
+  const setFieldTouched = (name: keyof T) => { // Function to mark a field as touched
     setTouched(prev => ({ ...prev, [name]: true }))
     validateField(name, values[name])
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => { // Function to handle form submission
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
       // Validate all fields
       const validatedData = schema.parse(values)
-      setErrors({})
+      setErrors({}) // Clear any previous errors
       
       // Submit the form
       await onSubmit(validatedData as T)
-    } catch (error) {
+    } catch (error) { // If validation fails, set the errors
       if (error instanceof z.ZodError) {
-        const fieldErrors: Partial<Record<keyof T, FieldError>> = {}
-        error.issues.forEach(err => {
-          if (err.path.length > 0) {
-            const fieldName = err.path[0] as keyof T
-            fieldErrors[fieldName] = { message: err.message }
+        const fieldErrors: Partial<Record<keyof T, FieldError>> = {} // Create an object to store field errors
+        error.issues.forEach(err => { // Iterate over validation issues
+          if (err.path.length > 0) { // If the error has a path, it corresponds to a field
+            const fieldName = err.path[0] as keyof T // Get the field name from the error path
+            fieldErrors[fieldName] = { message: err.message } // Set the error message for the field
           }
         })
-        setErrors(fieldErrors)
+        setErrors(fieldErrors) // Update the errors state with the field errors
       }
-    } finally {
+    } finally { // Reset submitting state
       setIsSubmitting(false)
     }
   }
 
-  const getFieldError = (name: keyof T): string | undefined => {
+  const getFieldError = (name: keyof T): string | undefined => { // Function to get the error message for a specific field
     return errors[name]?.message
   }
 
-  const hasErrors = Object.keys(errors).length > 0
-  const isFieldInvalid = (name: keyof T) => touched[name] && !!errors[name]
+  const hasErrors = Object.keys(errors).length > 0 // Check if there are any validation errors
+  const isFieldInvalid = (name: keyof T) => touched[name] && !!errors[name] // Check if a specific field is invalid
 
-  return {
+  return { // Return the form state and methods
     values,
     errors,
     touched,

@@ -1,6 +1,8 @@
 import React from 'react'
 
-interface InputProps {
+// Input component to render a styled input field
+
+interface InputProps { // Props for the Input component
   type?: string
   placeholder?: string
   value: string
@@ -11,7 +13,7 @@ interface InputProps {
   id?: string
 }
 
-export function Input({ 
+export function Input({ // Main Input component to render a styled input field
   type = 'text', 
   placeholder, 
   value, 
@@ -19,7 +21,7 @@ export function Input({
   required = false,
   id,
   ...ariaProps
-}: InputProps) {
+}: InputProps) { // Spread the rest of the props to the input element
   const style = {
     width: '100%',
     padding: '0.5rem 0.75rem',
@@ -31,7 +33,7 @@ export function Input({
     transition: 'border-color 0.2s ease',
   }
 
-  return (
+  return ( // Render the input field with the defined styles and event handlers
     <input
       id={id}
       type={type}

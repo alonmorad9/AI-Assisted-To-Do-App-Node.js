@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface ValidatedInputProps {
+interface ValidatedInputProps { // Props for the ValidatedInput component
   type?: string
   placeholder?: string
   value: string
@@ -12,7 +12,7 @@ interface ValidatedInputProps {
   id?: string
 }
 
-export function ValidatedInput({
+export function ValidatedInput({ // ValidatedInput component
   type = 'text',
   placeholder,
   value,
@@ -22,10 +22,10 @@ export function ValidatedInput({
   required = false,
   label,
   id,
-}: ValidatedInputProps) {
+}: ValidatedInputProps) { // Main ValidatedInput component to render a styled input field with validation
   const hasError = !!error
 
-  const baseStyle = {
+  const baseStyle = { // Base styles for the input field
     width: '100%',
     padding: '0.75rem',
     border: `2px solid ${hasError ? '#ef4444' : '#d1d5db'}`,
@@ -37,7 +37,7 @@ export function ValidatedInput({
     backgroundColor: hasError ? '#fef2f2' : 'white',
   }
 
-  const labelStyle = {
+  const labelStyle = { // Style for the label of the input field
     display: 'block',
     fontSize: '0.875rem',
     fontWeight: '500',
@@ -45,7 +45,7 @@ export function ValidatedInput({
     marginBottom: '0.5rem',
   }
 
-  const errorStyle = {
+  const errorStyle = { // Style for the error message
     color: '#ef4444',
     fontSize: '0.75rem',
     marginTop: '0.25rem',
@@ -54,7 +54,7 @@ export function ValidatedInput({
     gap: '0.25rem',
   }
 
-  return (
+  return ( // JSX for the ValidatedInput component
     <div>
       {label && (
         <label htmlFor={id} style={labelStyle}>

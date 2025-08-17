@@ -1,21 +1,21 @@
-{
-  "compilerOptions": {
+{ 
+  "compilerOptions": { // Compiler options for TypeScript
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "skipLibCheck": true,
+    "skipLibCheck": true, // Skip type checking of declaration files
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client"]
+    "allowImportingTsExtensions": true, // Allow importing TypeScript files
+    "resolveJsonModule": true, // Allow importing JSON files
+    "isolatedModules": true, // Ensure each file can be transpiled independently
+    "noEmit": true, // Do not emit output files
+    "jsx": "react-jsx", // Use the new JSX transform
+    "strict": true, // Enable all strict type-checking options
+    "noUnusedLocals": false, // Do not report errors on unused local variables
+    "noUnusedParameters": false, // Do not report errors on unused parameters
+    "noFallthroughCasesInSwitch": true, // Do not allow fallthrough cases in switch statements
+    "types": ["vite/client"] // Include types for Vite client
   },
-  "include": ["src"]
+  "include": ["src"] // Include all files in the src directory
 }

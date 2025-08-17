@@ -3,18 +3,18 @@ import { Todo } from '../../types'
 import { Button } from '../ui/Button'
 import { updateTodo, deleteTodo } from '../../lib/todos'
 
-interface BulkActionsProps {
-  todos: Todo[]
-  onTodosUpdated: () => void
+interface BulkActionsProps { // Props for the BulkActions component
+  todos: Todo[] // List of todos to perform bulk actions on
+  onTodosUpdated: () => void // Callback function to call when todos are updated
 }
 
-export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) {
-  const [loading, setLoading] = React.useState(false)
+export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) { // Main component to handle bulk actions on todos
+  const [loading, setLoading] = React.useState(false) // State to indicate if bulk actions are being processed
 
-  const activeTodos = todos.filter(todo => !todo.completed)
-  const completedTodos = todos.filter(todo => todo.completed)
+  const activeTodos = todos.filter(todo => !todo.completed) // Filter active todos
+  const completedTodos = todos.filter(todo => todo.completed) // Filter completed todos
 
-  const handleToggleAll = async () => {
+  const handleToggleAll = async () => { // Function to toggle all todos between completed and active states
     if (todos.length === 0) return
 
     setLoading(true)
@@ -26,8 +26,8 @@ export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) {
         updateTodo(todo.id, { completed: shouldComplete })
       )
       
-      await Promise.all(promises)
-      onTodosUpdated()
+      await Promise.all(promises) // Wait for all updates to complete
+      onTodosUpdated() // Notify parent component that todos have been updated
     } catch (err) {
       console.error('Failed to toggle all todos:', err)
     } finally {
@@ -35,10 +35,10 @@ export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) {
     }
   }
 
-  const handleDeleteCompleted = async () => {
+  const handleDeleteCompleted = async () => { // Function to delete all completed todos
     if (completedTodos.length === 0) return
 
-    if (!confirm(`Are you sure you want to delete ${completedTodos.length} completed todos?`)) {
+    if (!confirm(`Are you sure you want to delete ${completedTodos.length} completed todos?`)) { // Confirm deletion
       return
     }
 
@@ -54,11 +54,11 @@ export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) {
     }
   }
 
-  if (todos.length === 0) {
+  if (todos.length === 0) { // If there are no todos, do not render the component
     return null
   }
 
-  const containerStyle = {
+  const containerStyle = { // Style for the bulk actions container
     backgroundColor: 'white',
     padding: '1rem',
     borderRadius: '0.5rem',
@@ -66,14 +66,14 @@ export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) {
     marginBottom: '1rem',
   }
 
-  const actionsStyle = {
+  const actionsStyle = { // Style for the action buttons
     display: 'flex',
     gap: '0.75rem',
     alignItems: 'center',
     flexWrap: 'wrap' as const,
   }
 
-  const getToggleAllText = () => {
+  const getToggleAllText = () => { // Function to determine the text for the toggle all button
     if (activeTodos.length > 0) {
       return `Mark All Complete (${activeTodos.length})`
     } else {
@@ -81,7 +81,7 @@ export function BulkActions({ todos, onTodosUpdated }: BulkActionsProps) {
     }
   }
 
-  return (
+  return ( // JSX for the BulkActions component
     <div style={containerStyle}>
       <div style={actionsStyle}>
         <Button

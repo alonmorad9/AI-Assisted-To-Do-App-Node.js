@@ -6,18 +6,18 @@ import { useFormValidation } from '../../hooks/useFormValidation'
 import { signUpSchema, signInSchema, sanitizeString } from '../../lib/validation'
 import { useToast } from '../../lib/toast'
 
-export function AuthForm() {
-  const [isSignUp, setIsSignUp] = useState(false)
-  const { signUp, signIn } = useAuth()
-  const { showToast } = useToast()
+export function AuthForm() { // Main authentication form component that handles both sign up and sign in
+  const [isSignUp, setIsSignUp] = useState(false) // Flag to determine whether we're signing up or signing in
+  const { signUp, signIn } = useAuth() // Import sign up and sign in functions from auth context
+  const { showToast } = useToast() // Import toast function for displaying messages
 
   // Form validation for sign up
   const signUpForm = useFormValidation({
-    schema: signUpSchema,
-    initialValues: { email: '', password: '' },
+    schema: signUpSchema, // Validation schema for sign up using zod
+    initialValues: { email: '', password: '' }, 
     onSubmit: async (data) => {
       const sanitizedData = {
-        email: sanitizeString(data.email).toLowerCase(),
+        email: sanitizeString(data.email).toLowerCase(), // Sanitize email input
         password: data.password, // Don't sanitize passwords, just validate
       }
 
@@ -36,10 +36,10 @@ export function AuthForm() {
 
   // Form validation for sign in
   const signInForm = useFormValidation({
-    schema: signInSchema,
+    schema: signInSchema, // Validation schema for sign in using zod
     initialValues: { email: '', password: '' },
     onSubmit: async (data) => {
-      const sanitizedEmail = sanitizeString(data.email).toLowerCase()
+      const sanitizedEmail = sanitizeString(data.email).toLowerCase() // Sanitize email input
 
       const { error } = await signIn(sanitizedEmail, data.password)
       if (error) {
@@ -54,9 +54,9 @@ export function AuthForm() {
     },
   })
 
-  const currentForm = isSignUp ? signUpForm : signInForm
+  const currentForm = isSignUp ? signUpForm : signInForm // Determine which form to use based on the isSignUp state
 
-  const switchMode = () => {
+  const switchMode = () => { // Function to switch between sign up and sign in modes
     setIsSignUp(!isSignUp)
     // Reset both forms when switching
     signUpForm.setValue('email', '')
@@ -65,7 +65,7 @@ export function AuthForm() {
     signInForm.setValue('password', '')
   }
 
-  const containerStyle = {
+  const containerStyle = { // Styles for the container of the authentication form
     maxWidth: '400px',
     margin: '0 auto',
     padding: '2rem',
@@ -74,13 +74,13 @@ export function AuthForm() {
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
   }
 
-  const formStyle = {
+  const formStyle = { // Styles for the form
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '1.5rem',
   }
 
-  const titleStyle = {
+  const titleStyle = { // Styles for the title of the form
     fontSize: '1.5rem',
     fontWeight: 'bold',
     textAlign: 'center' as const,
@@ -88,14 +88,14 @@ export function AuthForm() {
     color: '#1f2937',
   }
 
-  const linkStyle = {
+  const linkStyle = {  // Styles for the link to switch between sign up and sign in
     color: '#3b82f6',
     cursor: 'pointer',
     textDecoration: 'underline',
     fontWeight: '500',
   }
 
-  const passwordRequirementsStyle = {
+  const passwordRequirementsStyle = { // Styles for the password requirements section
     fontSize: '0.75rem',
     color: '#6b7280',
     marginTop: '0.5rem',
@@ -105,7 +105,7 @@ export function AuthForm() {
     border: '1px solid #e5e7eb',
   }
 
-  return (
+  return ( // JSX for the authentication form
     <div style={containerStyle}>
       <h2 style={titleStyle}>
         {isSignUp ? '🚀 Create Account' : '👋 Welcome Back'}
@@ -138,7 +138,7 @@ export function AuthForm() {
           />
           
           {isSignUp && (
-            <div style={passwordRequirementsStyle}>
+            <div style={passwordRequirementsStyle}> 
               <strong>Password Requirements:</strong>
               <ul style={{ margin: '0.5rem 0 0 1rem', paddingLeft: 0 }}>
                 <li>At least 6 characters long</li>

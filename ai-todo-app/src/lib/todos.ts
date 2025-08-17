@@ -2,15 +2,15 @@ import { supabase } from './supabase'
 import { Todo } from '../types'
 import { createTodoSchema, updateTodoSchema, sanitizeTodoInput } from './validation'
 
-export async function createTodo(todo: Omit<Todo, 'id' | 'created_at' | 'user_id'>) {
+export async function createTodo(todo: Omit<Todo, 'id' | 'created_at' | 'user_id'>) { // Function to create a new todo
   try {
     // Server-side validation
-    const validationResult = createTodoSchema.safeParse(todo)
+    const validationResult = createTodoSchema.safeParse(todo) // Validate the todo input against the schema
     if (!validationResult.success) {
       return { 
         data: null, 
         error: { 
-          message: `Validation error: ${validationResult.error.issues[0].message}` 
+          message: `Validation error: ${validationResult.error.issues[0].message}` // Return the first validation error
         } 
       }
     }
@@ -18,26 +18,26 @@ export async function createTodo(todo: Omit<Todo, 'id' | 'created_at' | 'user_id
     // Sanitize the validated data
     const sanitizedTodo = sanitizeTodoInput(validationResult.data)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser() // Get the current user from Supabase
     
-    if (!user) {
+    if (!user) { // If no user is authenticated, return an error
       return { 
         data: null, 
         error: { message: 'User not authenticated' } 
       }
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabase // Insert the new todo into the database
       .from('todos')
       .insert({
         ...sanitizedTodo,
         user_id: user.id,
       })
-      .select()
-      .single()
+      .select() // Select the inserted todo
+      .single() // Get the inserted todo data
 
-    return { data, error }
-  } catch (err) {
+    return { data, error } // Return the created todo or an error
+  } catch (err) { // Catch any unexpected errors
     console.error('Error creating todo:', err)
     return { 
       data: null, 
@@ -46,7 +46,7 @@ export async function createTodo(todo: Omit<Todo, 'id' | 'created_at' | 'user_id
   }
 }
 
-export async function getTodos() {
+export async function getTodos() { // Function to get all todos
   try {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -73,7 +73,7 @@ export async function getTodos() {
   }
 }
 
-export async function updateTodo(id: string, updates: Partial<Todo>) {
+export async function updateTodo(id: string, updates: Partial<Todo>) { // Function to update an existing todo
   try {
     // Validate the ID
     if (!id || typeof id !== 'string') {
@@ -130,7 +130,7 @@ export async function updateTodo(id: string, updates: Partial<Todo>) {
   }
 }
 
-export async function deleteTodo(id: string) {
+export async function deleteTodo(id: string) { // Function to delete a todo by ID
   try {
     // Validate the ID
     if (!id || typeof id !== 'string') {
@@ -149,7 +149,7 @@ export async function deleteTodo(id: string) {
       }
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabase // Delete the todo from the database
       .from('todos')
       .delete()
       .eq('id', id)
@@ -157,8 +157,8 @@ export async function deleteTodo(id: string) {
       .select()
       .single()
 
-    return { data, error }
-  } catch (err) {
+    return { data, error } // Return the deleted todo or an error
+  } catch (err) { // Catch any unexpected errors
     console.error('Error deleting todo:', err)
     return { 
       data: null, 

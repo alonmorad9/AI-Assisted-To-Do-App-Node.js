@@ -1,31 +1,31 @@
 import React, { Component, ReactNode } from 'react'
 import { Button } from './ui/Button'
 
-interface Props {
+interface Props { // Props for the ErrorBoundary component
   children: ReactNode
 }
 
-interface State {
+interface State { // State for the ErrorBoundary component
   hasError: boolean
   error?: Error
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+export class ErrorBoundary extends Component<Props, State> { // ErrorBoundary component
   constructor(props: Props) {
     super(props)
     this.state = { hasError: false }
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): State { // Update state to indicate an error has occurred
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) { // Log the error to an error reporting service
     console.error('Error caught by boundary:', error, errorInfo)
   }
 
-  render() {
-    if (this.state.hasError) {
+  render() { // Render fallback UI if an error has occurred
+    if (this.state.hasError) { // If an error has occurred, render the fallback UI
       return (
         <div style={{
           minHeight: '100vh',
@@ -57,6 +57,6 @@ export class ErrorBoundary extends Component<Props, State> {
       )
     }
 
-    return this.props.children
+    return this.props.children // If no error has occurred, render the children components
   }
 }

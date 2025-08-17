@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react'
 
-interface ToastProps {
+interface ToastProps { // Props for the Toast component
   message: string
   type: 'success' | 'error' | 'info'
   onClose: () => void
   duration?: number
 }
 
-export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
-  useEffect(() => {
+export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) { // Toast component to display messages with different styles based on type
+  useEffect(() => { // Automatically close the toast after the specified duration
     const timer = setTimeout(onClose, duration)
     return () => clearTimeout(timer)
-  }, [onClose, duration])
+  }, [onClose, duration]) // Cleanup timer on unmount or when dependencies change
 
-  const getTypeStyles = () => {
+  const getTypeStyles = () => { // Function to determine styles based on type prop
     switch (type) {
       case 'success':
         return { backgroundColor: '#10b981', color: 'white' }
@@ -25,7 +25,7 @@ export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
     }
   }
 
-  const toastStyle = {
+  const toastStyle = { // Styles for the toast container
     position: 'fixed' as const,
     top: '1rem',
     right: '1rem',
@@ -43,7 +43,7 @@ export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
     gap: '0.5rem',
   }
 
-  const closeButtonStyle = {
+  const closeButtonStyle = { // Styles for the close button
     background: 'none',
     border: 'none',
     color: 'inherit',
@@ -58,7 +58,7 @@ export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
     justifyContent: 'center',
   }
 
-  return (
+  return ( // Render the toast with the message and close button
     <div style={toastStyle}>
       <span>{message}</span>
       <button onClick={onClose} style={closeButtonStyle}>

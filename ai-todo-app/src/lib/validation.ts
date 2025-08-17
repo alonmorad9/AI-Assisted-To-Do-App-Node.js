@@ -55,8 +55,8 @@ export const createTodoSchema = z.object({
   }),
 })
 
-export const updateTodoSchema = createTodoSchema.partial().extend({
-  completed: z.boolean().optional(),
+export const updateTodoSchema = createTodoSchema.partial().extend({ // Make all fields optional for updates 
+  completed: z.boolean().optional(), // Optional field for marking todo as completed
 })
 
 // Type inference from schemas
@@ -65,7 +65,9 @@ export type SignInData = z.infer<typeof signInSchema>
 export type CreateTodoData = z.infer<typeof createTodoSchema>
 export type UpdateTodoData = z.infer<typeof updateTodoSchema>
 
-// Validation helper functions
+// Validation helper functions:
+
+// Validate email format
 export function validateEmail(email: string): { isValid: boolean; error?: string } {
   try {
     z.string().email().parse(email)
@@ -78,6 +80,7 @@ export function validateEmail(email: string): { isValid: boolean; error?: string
   }
 }
 
+// Validate password strength
 export function validateTodoTitle(title: string): { isValid: boolean; error?: string } {
   try {
     createTodoSchema.pick({ title: true }).parse({ title })
@@ -98,6 +101,7 @@ export function sanitizeString(input: string): string {
     .substring(0, 1000) // Limit length
 }
 
+// Sanitize todo input
 export function sanitizeTodoInput(input: CreateTodoData): CreateTodoData {
   return {
     title: sanitizeString(input.title),
