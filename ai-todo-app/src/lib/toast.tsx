@@ -26,7 +26,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) { // 
   }
 
   return ( // Provide the Toast context to children components
-    <ToastContext.Provider value={{ showToast }}> // Provide the showToast function to the context
+    <ToastContext.Provider value={{ showToast }}> 
       {children}
       {toasts.map(toast => (
         <Toast
